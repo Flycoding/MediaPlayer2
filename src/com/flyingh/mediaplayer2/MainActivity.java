@@ -35,17 +35,14 @@ public class MainActivity extends Activity {
 	public void playOrPause(View view) {
 		if (player.isPlaying()) {
 			pause();
-			((Button) view).setText(R.string.play);
 		} else {
 			play();
-			((Button) view).setText(R.string.pause);
 		}
 	}
 
 	private void play() {
 		if (state == PAUSE) {
-			player.start();
-			state = PLAY;
+			start();
 			return;
 		}
 		File file = new File(Environment.getExternalStorageDirectory(), musicText.getText().toString());
@@ -81,6 +78,7 @@ public class MainActivity extends Activity {
 	private void pause() {
 		player.pause();
 		state = PAUSE;
+		playOrPauseButton.setText(R.string.play);
 	}
 
 	public void reset(View view) {
