@@ -45,7 +45,11 @@ public class MainActivity extends Activity {
 			start();
 			return;
 		}
-		File file = new File(Environment.getExternalStorageDirectory(), musicText.getText().toString());
+		String musicName = musicText.getText().toString();
+		if (musicName == null || "".equals(musicName.trim())) {
+			return;
+		}
+		File file = new File(Environment.getExternalStorageDirectory(), musicName);
 		if (file.exists()) {
 			player.reset();
 			try {
@@ -106,6 +110,20 @@ public class MainActivity extends Activity {
 		player.stop();
 		state = STOP;
 		playOrPauseButton.setText(R.string.play);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		pause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (state == PAUSE) {
+			start();
+		}
 	}
 
 	@Override
