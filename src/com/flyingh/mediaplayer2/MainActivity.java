@@ -12,6 +12,8 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Bundle;
 import android.os.Environment;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +32,26 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		musicText = (EditText) findViewById(R.id.music);
 		playOrPauseButton = (Button) findViewById(R.id.playOrPause);
+		TelephonyManager service = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+		service.listen(new PhoneStateListener() {
+			@Override
+			public void onCallStateChanged(int state, String incomingNumber) {
+				super.onCallStateChanged(state, incomingNumber);
+				switch (state) {
+				case TelephonyManager.CALL_STATE_RINGING:
+					pause();
+					break;
+				case TelephonyManager.CALL_STATE_IDLE:
+					if (MainActivity.this.state == PAUSE) {
+						start();
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+		}, PhoneStateListener.LISTEN_CALL_STATE);
 	}
 
 	public void playOrPause(View view) {
@@ -110,20 +132,6 @@ public class MainActivity extends Activity {
 		player.stop();
 		state = STOP;
 		playOrPauseButton.setText(R.string.play);
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		pause();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (state == PAUSE) {
-			start();
-		}
 	}
 
 	@Override
